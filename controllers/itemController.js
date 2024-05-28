@@ -1,7 +1,13 @@
 const ItemModel = require("../models/itemModel");
+const {validationResult} = require("express-validator")
 
 const addItem = async (req, res) => {
   const { name, price, description } = req.body;
+  const error =   validationResult(req)
+
+  if(!error.isEmpty()){
+    return res.status(400).json({errors:error.array()});
+  }
 
   const item = new ItemModel({
     name,

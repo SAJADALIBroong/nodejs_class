@@ -1,4 +1,5 @@
 const express = require("express");
+const validateItem = require('../middleware/validateItem')
 const router = express.Router();
 const {
   addItem,
@@ -12,7 +13,7 @@ const AuthMiddleware = require("../middleware/authMiddleware");
 ;
 
 
-router.post('/', addItem);
+router.post('/',validateItem, addItem);
 router.get('/', adminMiddleware,getItems);
 router.get('/:id',AuthMiddleware, getItemById);
 router.put('/:id', updateItem);
