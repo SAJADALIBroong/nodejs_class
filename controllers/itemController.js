@@ -1,5 +1,8 @@
 const ItemModel = require("../models/itemModel");
 const {validationResult} = require("express-validator")
+const client = require('../config/redis')
+
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const addItem = async (req, res) => {
   const { name, price, description } = req.body;
@@ -20,14 +23,21 @@ const addItem = async (req, res) => {
     message: "Item added successfully",
     item
   });
+
+  client.del('items')
 };
 
 const getItems = async (req, res) => {
+  await delay(5000);
   const items = await ItemModel.find();
   res.send({
     message: "Items fetched successfully",
     items
   });
+  client.set('items', JSON.stringify({ message: "Items fetched successfully", items }), {
+    EX: 3600 // Set expiration time to 1 hour
+  });
+
 };
 
 const getItemById = async (req, res) => {
@@ -36,6 +46,9 @@ const getItemById = async (req, res) => {
   res.send({
     message: "Item fetched successfully",
     item
+  });
+  client.set(`item:${id}`, JSON.stringify({ message: "Item fetched successfully", item }), {
+    EX: 3600 // Set expiration time to 1 hour
   });
 };
 
@@ -47,6 +60,8 @@ const updateItem = async (req, res) => {
     message: "Item updated successfully",
     item
   });
+  client.del(`item:${id}`);
+  client.del('items');
 };
 
 const deleteItem = async (req, res) => {
@@ -56,6 +71,8 @@ const deleteItem = async (req, res) => {
     message: "Item deleted successfully",
     item
   });
+  client.del(`item:${id}`);
+  client.del('items');
 };
 
 module.exports = {

@@ -1,6 +1,7 @@
 const express = require("express");
 const validateItem = require('../middleware/validateItem')
 const router = express.Router();
+const {cacheItems, cacheItemById} = require('../middleware/cache')
 const {
   addItem,
   getItems,
@@ -14,8 +15,8 @@ const AuthMiddleware = require("../middleware/authMiddleware");
 
 
 router.post('/',validateItem, addItem);
-router.get('/', adminMiddleware,getItems);
-router.get('/:id',AuthMiddleware, getItemById);
+router.get('/', adminMiddleware,cacheItems,getItems);
+router.get('/:id',AuthMiddleware,cacheItemById, getItemById);
 router.put('/:id', updateItem);
 router.delete('/:id', deleteItem);
 
