@@ -2,7 +2,7 @@ const ItemModel = require("../models/itemModel");
 const {validationResult} = require("express-validator")
 const client = require('../config/redis')
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const addItem = async (req, res) => {
   const { name, price, description } = req.body;
@@ -28,7 +28,7 @@ const addItem = async (req, res) => {
 };
 
 const getItems = async (req, res) => {
-  await delay(5000);
+  // await delay(5000);
   const items = await ItemModel.find();
   res.send({
     message: "Items fetched successfully",
@@ -41,6 +41,7 @@ const getItems = async (req, res) => {
 };
 
 const getItemById = async (req, res) => {
+try {
   const id = req.params.id;
   const item = await ItemModel.findById(id);
   res.send({
@@ -50,6 +51,9 @@ const getItemById = async (req, res) => {
   client.set(`item:${id}`, JSON.stringify({ message: "Item fetched successfully", item }), {
     EX: 3600 // Set expiration time to 1 hour
   });
+} catch (error) {
+  console.log(error)
+}
 };
 
 const updateItem = async (req, res) => {

@@ -13,7 +13,9 @@ app.use(express.json()); // middleware to parse JSON
 
 app.use('/item/', limiter)
 
-db.connectDB();
+if (process.env.NODE_ENV !== 'test') {
+db.connectDB()
+}
 
 app.use('/image', uploadRoutes);
 app.use("/item", itemRoutes);
@@ -23,3 +25,5 @@ app.use('/email',emailRoutes)
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+module.exports = app;
