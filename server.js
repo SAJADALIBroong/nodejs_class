@@ -5,6 +5,7 @@ const emailRoutes = require("./routes/emailRoutes")
 const uploadRoutes = require('./routes/uploadRoutes');
 const db = require("./config/db");
 const limiter = require("./middleware/rate-limit");
+const swaggerSetup = require('./swagger');
 
 const app = express();
 const PORT = 4000;
@@ -21,6 +22,8 @@ app.use('/image', uploadRoutes);
 app.use("/item", itemRoutes);
 app.use("/auth",authRoutes)
 app.use('/email',emailRoutes)
+
+swaggerSetup(app)
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
